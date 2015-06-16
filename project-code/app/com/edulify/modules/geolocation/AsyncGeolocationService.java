@@ -2,25 +2,20 @@ package com.edulify.modules.geolocation;
 
 import play.libs.F;
 
+@Deprecated
 public final class AsyncGeolocationService {
-  
-  private static GeolocationProvider provider;
-  
-  public static void initialize(GeolocationProvider provider) {
-    AsyncGeolocationService.provider = provider;
+
+  private static GeolocationService service;
+
+  public static void initialize(GeolocationService service) {
+    AsyncGeolocationService.service = service;
   }
-  
+
   public static F.Promise<Geolocation> getGeolocation(String ip) {
-    Geolocation geolocation = GeolocationCache.get(ip);
-    if (geolocation != null) return F.Promise.pure(geolocation);
-    
-    F.Promise<Geolocation> promise = provider.get(ip);
-    promise.onRedeem(new F.Callback<Geolocation>() {
-      @Override
-      public void invoke(Geolocation geolocation) throws Throwable {
-        GeolocationCache.set(geolocation);
-      }
-    });
-    return promise;
+    if (null == service) {
+      throw new IllegalStateException("Service not initialized. Enable GeolocationPlugin to use it.");
+    } else {
+      return service.getGeolocation(ip);
+    }
   }
 }

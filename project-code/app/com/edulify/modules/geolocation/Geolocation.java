@@ -1,6 +1,6 @@
 package com.edulify.modules.geolocation;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 
 public class Geolocation {
 
@@ -14,24 +14,6 @@ public class Geolocation {
   private double longitude;
   private String timeZone;
 
-  public Geolocation(String ip, String countryCode) {
-    this.ip = ip;
-    this.countryCode = countryCode;
-  }
-
-  public Geolocation(String ip,
-                     String countryCode,
-                     String countryName,
-                     String regionCode,
-                     String regionName,
-                     String city) {
-    this(ip, countryCode);
-    this.countryName = countryName;
-    this.regionCode  = regionCode;
-    this.regionName  = regionName;
-    this.city        = city;
-  }
-  
   public Geolocation(String ip,
                      String countryCode,
                      String countryName,
@@ -41,21 +23,32 @@ public class Geolocation {
                      double latitude,
                      double longitude,
                      String timeZone) {
-    this(ip, countryCode, countryName, regionCode, regionName, city);
+    this.ip = ip;
+    this.countryCode = countryCode;
+    this.countryName = countryName;
+    this.regionCode  = regionCode;
+    this.regionName  = regionName;
+    this.city        = city;
     this.latitude    = latitude;
     this.longitude   = longitude;
     this.timeZone    = timeZone;
   }
-  
-  public static Geolocation empty() {
-    return new Geolocation(
-        "", // ip
-        "", // countryCode
-        "", // countryName
-        "", // regionCode
-        "", // regionName
-        ""  // city
-    );
+
+  public Geolocation(String ip,
+                     String countryCode,
+                     String countryName,
+                     String regionCode,
+                     String regionName,
+                     String city) {
+    this(ip, countryCode, countryName, regionCode, regionName, city, .0, .0, null);
+  }
+
+  public Geolocation(String ip, String countryCode) {
+    this(ip, countryCode, "", "", "", "");
+  }
+
+  public Geolocation() {
+    this("", "");
   }
 
   public String getIp() {
@@ -96,6 +89,43 @@ public class Geolocation {
 
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+    return reflectionToString(this);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Geolocation that = (Geolocation) o;
+
+    if (Double.compare(that.latitude, latitude) != 0) return false;
+    if (Double.compare(that.longitude, longitude) != 0) return false;
+    if (ip != null ? !ip.equals(that.ip) : that.ip != null) return false;
+    if (countryCode != null ? !countryCode.equals(that.countryCode) : that.countryCode != null) return false;
+    if (countryName != null ? !countryName.equals(that.countryName) : that.countryName != null) return false;
+    if (regionCode != null ? !regionCode.equals(that.regionCode) : that.regionCode != null) return false;
+    if (regionName != null ? !regionName.equals(that.regionName) : that.regionName != null) return false;
+    if (city != null ? !city.equals(that.city) : that.city != null) return false;
+    return !(timeZone != null ? !timeZone.equals(that.timeZone) : that.timeZone != null);
+
+  }
+
+  @Override
+  public int hashCode() {
+    int result;
+    long temp;
+    result = ip != null ? ip.hashCode() : 0;
+    result = 31 * result + (countryCode != null ? countryCode.hashCode() : 0);
+    result = 31 * result + (countryName != null ? countryName.hashCode() : 0);
+    result = 31 * result + (regionCode != null ? regionCode.hashCode() : 0);
+    result = 31 * result + (regionName != null ? regionName.hashCode() : 0);
+    result = 31 * result + (city != null ? city.hashCode() : 0);
+    temp = Double.doubleToLongBits(latitude);
+    result = 31 * result + (int) (temp ^ (temp >>> 32));
+    temp = Double.doubleToLongBits(longitude);
+    result = 31 * result + (int) (temp ^ (temp >>> 32));
+    result = 31 * result + (timeZone != null ? timeZone.hashCode() : 0);
+    return result;
   }
 }
