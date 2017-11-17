@@ -1,7 +1,8 @@
 language: scala
 script:
-   - sbt clean compile test publishLocal
-   - cd sample/java && sbt clean compile test
+   - sbt clean compile test
 
 jdk:
    - oraclejdk8
+scala:
+   - 2.12.4
